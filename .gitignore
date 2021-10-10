@@ -1,0 +1,13 @@
+.idea
+env/
+venv/
+*.sqlite3
+
+files/*
+!files/.keep
+
+*.log
+cache/
+*.sh
+
+__pycache__/
