@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
-from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,7 +25,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-yg(@vqu!*#=ur8+o5+h3h
 DEBUG = os.environ.get('PROD_MODE', "false").lower() == "false"
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
-
 
 
 # Application definition
@@ -63,7 +61,7 @@ ROOT_URLCONF = 'thegame.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS':os.path.join(BASE_DIR, 'template'),
+        'DIRS': os.path.join(BASE_DIR, 'template'),
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
