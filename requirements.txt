@@ -1,3 +1,4 @@
 Django==3.2.8
 django-cas-ng==4.2.1
 flake8==3.9.2
+django-bootstrap3==15.0.0

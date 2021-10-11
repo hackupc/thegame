@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% block head_title %}{{ challenge.name }}{% endblock %}
+{% block content %}
+    <h1 style="text-align: center">{{ challenge.name }}</h1>
+    <p>{{ challenge.description }}</p>
+    <div style="display:flex">
+        <div style="margin: 0 auto;">
+            {% if challenge.type == challenge.TYPE_VIDEO %}
+                <video width="320" height="240" controls style="margin: 0 auto;">
+                  <source src="{{ challenge.file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+                </video>
+            {% elif challenge.type == challenge.TYPE_AUDIO %}
+                <audio controls>
+                  <source src="{{ challenge.file.url }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+                </audio>
+            {% elif challenge.type == challenge.TYPE_FILE %}
+                <a href="{{ challenge.file.url }}" class="btn btn-block btn-default" target="_blank">Download files</a>
+            {% elif challenge.type == challenge.TYPE_IMAGE %}
+                <img src="{{ challenge.file.url }}" width="100%">
+        {% endif %}
+        </div>
+    </div>
+    <form method="post" style="margin-top: 20px">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <button class="btn btn-block btn-primary">Submit</button>
+    </form>
+
+{% endblock %}
