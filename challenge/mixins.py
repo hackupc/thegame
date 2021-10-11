@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import AccessMixin
-from django.shortcuts import get_object_or_404
 
 from challenge.models import ChallengeUser
 
