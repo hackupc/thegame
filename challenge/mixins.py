@@ -2,7 +2,6 @@ from datetime import datetime
 
 import pytz
 from django.contrib.auth.mixins import AccessMixin
-from django.db.models import Count
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
 
@@ -22,7 +21,8 @@ class ChallengePermissionMixin(AccessMixin):
                 return self.handle_no_permission()
             if challenge.order != 1:
                 c_order = challenge.order - 1
-                success = ChallengeUser.objects.filter(challenge__order=c_order, user=request.user, success=True).count()
+                success = ChallengeUser.objects.filter(challenge__order=c_order, user=request.user,
+                                                       success=True).count()
                 challenges = Challenge.objects.filter(order=c_order).count()
                 if challenges > success:
                     return self.handle_no_permission()
