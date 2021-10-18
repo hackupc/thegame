@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load render_table from django_tables2 %}
+{% block head_title %}Ranking{% endblock %}
+{% block content %}
+    <h1 style="text-align: center">Ranking</h1>
+    <p>Reloading page in <span id="clock">60</span> seconds</p>
+    {% render_table table %}
+
+{% endblock %}
+{% block extra_scripts %}
+    <script>
+        let time = 60;
+        function to_date(text) {
+            let date = new Date(text);
+            return date.toLocaleString()
+        }
+        function timer() {
+            time -= 1;
+            if (time <= 0) {
+                location.reload();
+            } else {
+                $('#clock').each(function () {
+                    this.innerHTML = time.toString();
+                })
+            }
+        }
+        $( document ).ready(function() {
+            $('span[name="dates"]').each(function () {
+                this.innerHTML = to_date(this.innerHTML);
+            })
+            setInterval(timer, 1000); // Reloads page in 1 minute
+        });
+
+    </script>
+{% endblock %}

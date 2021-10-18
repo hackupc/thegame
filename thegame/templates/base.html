@@ -55,7 +55,11 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-
+                    {% if request.user.is_staff %}
+                        <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                    {% endif %}
+                    <li {% if '/ranking/' in request.path %}class="active"{% endif %}><a href="{% url 'ranking' %}">Ranking</a></li>
+                    <li {% if '/challenge/' in request.path %}class="active"{% endif %}><a href="{% url 'challenge-index' %}">Challenges</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if request.user.is_authenticated %}

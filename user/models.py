@@ -37,6 +37,7 @@ class User(AbstractBaseUser):
     )
     type = models.CharField(choices=USR_TYPE, default=USR_HACKER, max_length=2)
     is_admin = models.BooleanField(default=False)
+    username = models.CharField(max_length=200, null=True)
 
     def has_perm(self, perm, obj=None):
         """Does the user have a specific permission?"""
