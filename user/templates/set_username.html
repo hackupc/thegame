@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% block head_title %}Change username{% endblock %}
+{% block content %}
+    <h1 style="text-align: center">Set your username</h1>
+    <p>This username will be displayed on the ranking page</p>
+    {% if request.user.username %}
+        <p><strong>Username: </strong>{{ request.user.username }}</p>
+    {% endif %}
+    <form method="post" style="margin-top: 20px">
+        {% csrf_token %}
+        {% bootstrap_form_errors form %}
+        {% bootstrap_form form %}
+        <button class="btn btn-block btn-primary">Submit</button>
+    </form>
+
+{% endblock %}

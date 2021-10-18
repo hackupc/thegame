@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_cas_ng',
     'bootstrap3',
+    'django_tables2',
     'user',
     'challenge',
+    'ranking',
 ]
 
 MIDDLEWARE = [

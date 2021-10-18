@@ -16,11 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from thegame.views import FilesView
+from thegame.views import FilesView, IndexView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('user.urls')),
-    path('', include('challenge.urls')),
+    path('challenge/', include('challenge.urls')),
+    path('ranking/', include('ranking.urls')),
     path('files/<str:file>', FilesView.as_view(), name="protect_media"),
+    path('', IndexView.as_view(), name="index"),
 ]

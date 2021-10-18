@@ -11,4 +11,10 @@ class UserAdminForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ['email', 'name', 'type', 'is_admin']
+        fields = ['email', 'name', 'type', 'is_admin', 'username']
+
+
+class UsernameForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['username']
