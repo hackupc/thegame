@@ -34,8 +34,11 @@ class HomeView(LoginRequiredMixin, TemplateView):
             aux = result.get(challenge.order, [])
             aux.append(challenge)
             result[challenge.order] = aux
-        max_challenge = sorted(player.items())[-1] or (1, 0)
-        player_phase = max_challenge[0] + int(max_challenge[1] == len(result[max_challenge[0]]))
+        try:
+            max_challenge = sorted(player.items())[-1]
+        except IndexError:
+            max_challenge = (1, 0)
+        player_phase = max_challenge[0] + int(max_challenge[1] == len(result.get(max_challenge[0], [])))
         context.update({
             'challenge_groups': result,
             'player_phase': player_phase,

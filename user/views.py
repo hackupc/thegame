@@ -24,7 +24,7 @@ class ChooseUsername(LoginRequiredMixin, TemplateView):
                 form.add_error('username', 'Username already chosen')
             except User.DoesNotExist:
                 form.save()
-                return redirect(reverse('home'))
+                return redirect(reverse('index'))
         context = self.get_context_data()
         context.update({'form': form})
         return render(request, template_name=self.template_name, context=context)
