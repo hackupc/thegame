@@ -87,9 +87,9 @@ class ChallengeView(ChallengePermissionMixin, TemplateView):
                 context.update({'form': form})
                 return render(request, template_name=self.template_name, context=context)
             challenge_try.total_attempts += 1
+            challenge_try.last_try = now
             if challenge_try.challenge.check_solution(code):
                 challenge_try.success = True
-                challenge_try.last_try = now
                 challenge_try.save()
                 return redirect('challenge-index')
             form.add_error('code', 'Invalid code')
