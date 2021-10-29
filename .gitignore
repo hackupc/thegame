@@ -5,6 +5,7 @@ venv/
 
 files/*
 !files/.keep
+attempt_logs/*
 
 *.log
 cache/

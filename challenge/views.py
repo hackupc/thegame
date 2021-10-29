@@ -12,7 +12,9 @@ from challenge.forms import ChallengeTryForm
 from challenge.mixins import ChallengePermissionMixin
 from challenge.models import Challenge, ChallengeUser
 from challenge.tables import ChallengeStatsTable
+from thegame.log_utils import save_attempt, get_attempts
 from user.mixins import IsStaffMixin
+from user.models import User
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -92,6 +94,7 @@ class ChallengeView(ChallengePermissionMixin, TemplateView):
                 challenge_try.success = True
                 challenge_try.save()
                 return redirect('challenge-index')
+            save_attempt(code, user_id=request.user.id, challenge_id=challenge_try.challenge_id)
             form.add_error('code', 'Invalid code')
             challenge_try.save()
         context.update({'form': form})
@@ -114,4 +117,21 @@ class ChallengeStatsView(IsStaffMixin, SingleTableView):
         for c in context.get('object_list', []):
             succeed += int(c.success)
         context.update({'challenge': challenge, 'succeed': succeed})
+        return context
+
+
+class ChallengeStatsAttemptView(IsStaffMixin, TemplateView):
+    template_name = 'challenge_stats_attempts.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        u_id = self.kwargs.get('u_id', None)
+        if u_id is None:
+            user = None
+        else:
+            user = get_object_or_404(User, id=u_id)
+        c_id = self.kwargs.get('c_id')
+        challenge = get_object_or_404(Challenge, pk=c_id)
+        attempts = get_attempts(challenge_id=c_id, user_id=u_id)
+        context.update({'attempts': attempts, 'challenge': challenge, 'user': user})
         return context
