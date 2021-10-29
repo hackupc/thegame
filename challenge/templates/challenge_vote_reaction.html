@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load static %}
+{% block head_title %}Thanks!{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-6" style="padding-left: 0px !important;">
+            <a href="{% url 'challenge-index' %}" class="btn btn-default">< Back</a>
+        </div>
+    </div>
+
+    <h1 style="text-align: center">Thanks you {{ request.user.name }}!</h1>
+    <div style="display:flex">
+        <div style="margin: 0 auto; width: 50%">
+            <img src="{{ reaction.image.url }}" width="100%">
+        </div>
+    </div>
+
+{% endblock %}

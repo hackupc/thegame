@@ -13,11 +13,11 @@
         {% endif %}
     </div>
 
-    <h1 style="text-align: center">{{ challenge.name }}</h1>
-    {% if form is None %}
-        <div class="alert alert-success" role="alert">Challenge completed!</div>
-    {% endif %}
-    {{ challenge.description|safe }}
+    <h1 style="text-align: center">{{ challenge.name }}{% if not form %} (Completed){% endif %}</h1>
+    <div style="margin-bottom: 20px">
+        {{ challenge.description|safe }}
+    </div>
+
     <div style="display:flex">
         <div style="margin: 0 auto;">
             {% if challenge.type == challenge.TYPE_VIDEO %}
@@ -45,6 +45,8 @@
             {% bootstrap_form form %}
             <button class="btn btn-block btn-primary">Submit</button>
         </form>
+    {% else %}
+        <a class="btn btn-block btn-primary" href="{% url 'challenge-vote' challenge.id %}">Vote</a>
     {% endif %}
 
 {% endblock %}

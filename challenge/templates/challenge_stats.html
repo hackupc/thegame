@@ -15,7 +15,8 @@
     <h1 style="text-align: center">Stats from challenge: {{ challenge.name }}</h1>
     <p>Reloading page in <span id="clock">60</span> seconds<br>
     Tried by {{ object_list|length }} users<br>
-    Succeed by {{ succeed }} users</p>
+    Succeed by {{ succeed }} users<br>
+    Average vote: {{ average_vote|floatformat:2 }}</p>
 
     {% render_table table %}
 

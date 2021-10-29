@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm, Form
 
-from challenge.models import Challenge
+from challenge.models import Challenge, ChallengeUser
 
 
 class ChallengeAdminForm(ModelForm):
@@ -21,3 +21,9 @@ class ChallengeAdminForm(ModelForm):
 
 class ChallengeTryForm(Form):
     code = forms.CharField(initial='', required=True)
+
+
+class VoteForm(ModelForm):
+    class Meta:
+        fields = ('vote', 'comment')
+        model = ChallengeUser

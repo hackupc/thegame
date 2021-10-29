@@ -3,14 +3,15 @@ from datetime import datetime, timedelta
 import pytz
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Avg
 from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse
 from django.views.generic import TemplateView
 from django_tables2 import SingleTableView
 
-from challenge.forms import ChallengeTryForm
+from challenge.forms import ChallengeTryForm, VoteForm
 from challenge.mixins import ChallengePermissionMixin
-from challenge.models import Challenge, ChallengeUser
+from challenge.models import Challenge, ChallengeUser, VoteReaction
 from challenge.tables import ChallengeStatsTable
 from thegame.log_utils import save_attempt, get_attempts
 from user.mixins import IsStaffMixin
@@ -93,7 +94,10 @@ class ChallengeView(ChallengePermissionMixin, TemplateView):
             if challenge_try.challenge.check_solution(code):
                 challenge_try.success = True
                 challenge_try.save()
-                return redirect('challenge-index')
+                return redirect(reverse('challenge-vote', args=[challenge_try.challenge_id]))
+            troll = challenge_try.challenge.check_troll(code)
+            if troll is not None:
+                return redirect(troll)
             save_attempt(code, user_id=request.user.id, challenge_id=challenge_try.challenge_id)
             form.add_error('code', 'Invalid code')
             challenge_try.save()
@@ -114,9 +118,10 @@ class ChallengeStatsView(IsStaffMixin, SingleTableView):
         c_id = self.kwargs.get('c_id')
         challenge = get_object_or_404(Challenge, pk=c_id)
         succeed = 0
+        average_vote = ChallengeUser.objects.filter(vote__isnull=False).aggregate(average=Avg('vote')).get('average', 0)
         for c in context.get('object_list', []):
             succeed += int(c.success)
-        context.update({'challenge': challenge, 'succeed': succeed})
+        context.update({'challenge': challenge, 'succeed': succeed, 'average_vote': average_vote or 0})
         return context
 
 
@@ -134,4 +139,45 @@ class ChallengeStatsAttemptView(IsStaffMixin, TemplateView):
         challenge = get_object_or_404(Challenge, pk=c_id)
         attempts = get_attempts(challenge_id=c_id, user_id=u_id)
         context.update({'attempts': attempts, 'challenge': challenge, 'user': user})
+        return context
+
+
+class VoteChallengeView(LoginRequiredMixin, TemplateView):
+    template_name = 'challenge_vote.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_id = self.kwargs.get('c_id')
+        challenge_user = get_object_or_404(ChallengeUser, challenge_id=c_id, user_id=self.request.user.id, success=True)
+        context.update({'challenge': challenge_user.challenge, 'form': VoteForm(instance=challenge_user),
+                        'max_vote': [(x, str(x)) for x in range(1, 11)]})
+        return context
+
+    def post(self, request, **kwargs):
+        c_id = kwargs.get('c_id')
+        challenge_user = get_object_or_404(ChallengeUser, challenge_id=c_id, user_id=request.user.id, success=True)
+        form = VoteForm(request.POST, instance=challenge_user)
+        if form.is_valid():
+            instance = form.save()
+            reaction = VoteReaction.TYPE_HAPPY if instance.vote > 5 else VoteReaction.TYPE_SAD
+            return redirect(reverse('challenge-reaction', args=[challenge_user.challenge_id, reaction]))
+        context = self.get_context_data()
+        context.update({'form': form})
+        return render(request, self.template_name, context=context)
+
+
+class VoteChallengeReactionView(LoginRequiredMixin, TemplateView):
+    template_name = 'challenge_vote_reaction.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_id = self.kwargs.get('c_id')
+        r_type = self.kwargs.get('r_type')
+        get_object_or_404(ChallengeUser, challenge_id=c_id, user_id=self.request.user.id, success=True,
+                          vote__isnull=False)
+        try:
+            reaction = VoteReaction.objects.get(challenge_id=c_id, type=r_type)
+            context.update({'reaction': reaction})
+        except VoteReaction.DoesNotExist:
+            pass
         return context

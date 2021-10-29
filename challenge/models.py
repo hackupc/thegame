@@ -12,12 +12,14 @@ class Challenge(models.Model):
     TYPE_AUDIO = 'mp3'
     TYPE_VIDEO = 'mp4'
     TYPE_HTML = 'html'
+    TYPE_NONE = 'none'
     TYPES = (
         (TYPE_IMAGE, 'Image'),
         (TYPE_FILE, 'File'),
         (TYPE_AUDIO, 'Audio'),
         (TYPE_VIDEO, 'Video'),
         (TYPE_HTML, 'HTML Template'),
+        (TYPE_NONE, 'None'),
     )
 
     name = models.CharField(max_length=100)
@@ -48,6 +50,12 @@ class Challenge(models.Model):
     def check_solution(self, solution):
         return check_password(solution, self.solution)
 
+    def check_troll(self, code):
+        try:
+            return self.challengetroll_set.get(code=code).url
+        except ChallengeTroll.DoesNotExist:
+            return None
+
 
 class ChallengeUser(models.Model):
     user = models.ForeignKey('user.User', on_delete=models.DO_NOTHING)
@@ -58,3 +66,36 @@ class ChallengeUser(models.Model):
     success = models.BooleanField(default=False)
     attempts = models.IntegerField(default=0)
     total_attempts = models.IntegerField(default=0)
+    vote = models.IntegerField(null=True)
+    comment = models.TextField(null=True, blank=True)
+
+
+class ChallengeTroll(models.Model):
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
+    code = models.CharField(max_length=1000)
+    url = models.URLField()
+
+    def __str__(self):
+        return '%s (%s)' % (self.challenge, self.pk)
+
+    class Meta:
+        unique_together = ('challenge', 'code')
+
+
+class VoteReaction(models.Model):
+    TYPE_HAPPY = 'happy'
+    TYPE_SAD = 'sad'
+    TYPES = [
+        (TYPE_HAPPY, 'Happy'),
+        (TYPE_SAD, 'Sad'),
+    ]
+
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
+    image = models.FileField()
+    type = models.CharField(max_length=10, choices=TYPES)
+
+    def __str__(self):
+        return '%s - %s' % (self.challenge, self.get_type_display())
+
+    class Meta:
+        unique_together = ('challenge', 'type')
