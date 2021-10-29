@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load static %}
+{% block head_title %}{{ challenge.name }}{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-6" style="padding-left: 0px !important;">
+            <a href="{% url 'challenge-index' %}" class="btn btn-default">< Back</a>
+        </div>
+    </div>
+
+    <h1 style="text-align: center">Challenge completed: {{ challenge.name }}</h1>
+    <form method="post" style="margin-top: 20px">
+        {% csrf_token %}
+        <h2>Vote</h2>
+        {% bootstrap_form_errors form %}
+        <p>You have completed this challenge. Congratulations! We would like to hear what did you think about this challenge. <br>
+           This is completely optional but if you rate the challenge we would appreciate it a lot!</p>
+        <div style="margin-top: 20px; margin-bottom: 20px; align-content: center; width: 100%">
+            {% include 'include/number10.html' with name='vote' %}<br>
+        </div>
+        {% bootstrap_field form.comment %}
+        <button type="submit" class="btn btn-block btn-primary">Submit</button>
+    </form>
+
+{% endblock %}
+{% block extra_scripts %}
+    <script src="{% static 'lib/barrating.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('.barrating').barrating({
+                theme: 'bars-square',
+                showValues: true,
+                showSelectedRating: false
+            });
+        });
+        $(document).ready(function () {
+            let value = '{{ form.instance.vote }}';
+            if (value === 'None') value = '5';
+            $('.barrating').barrating('set', value);
+        })
+    </script>
+{% endblock %}

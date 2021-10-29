@@ -8,6 +8,7 @@ class ChallengeStatsTable(tables.Table):
                                                     '{{ record.first_try|date:"m/d/Y H:i:s T" }}</span>')
     last_try = tables.TemplateColumn(template_code='<span name="dates">'
                                                    '{{ record.last_try|date:"m/d/Y H:i:s T" }}</span>')
+    action = tables.TemplateColumn(template_name='table_column/stats_action.html', orderable=False)
 
     class Meta:
         orderable = False
