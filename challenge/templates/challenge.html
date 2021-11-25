@@ -13,7 +13,7 @@
         {% endif %}
     </div>
 
-    <h1 style="text-align: center">{{ challenge.name }}{% if not form %} (Completed){% endif %}</h1>
+    <h1 style="text-align: center">{{ challenge.name }} {% if not form %}(Completed){% elif finished %}({{ app_name }} has finished){% endif %}</h1>
     <div style="margin-bottom: 20px">
         {{ challenge.description|safe }}
     </div>
@@ -43,7 +43,7 @@
         <form method="post" style="margin-top: 20px">
             {% csrf_token %}
             {% bootstrap_form form %}
-            <button class="btn btn-block btn-primary">Submit</button>
+            <button class="btn btn-block btn-primary" {% if finished %}disabled{% endif %}>Submit</button>
         </form>
     {% else %}
         <a class="btn btn-block btn-primary" href="{% url 'challenge-vote' challenge.id %}">Vote</a>

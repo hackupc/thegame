@@ -1,0 +1,4 @@
+#!/bin/bash
+source .env
+
+./env/bin/gunicorn --workers 3 --log-file=gunicorn.log --bind unix:backend.sock thegame.wsgi:application

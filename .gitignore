@@ -3,6 +3,7 @@ env/
 venv/
 *.sqlite3
 
+.env
 files/*
 !files/.keep
 attempt_logs/*

@@ -14,6 +14,7 @@ from challenge.mixins import ChallengePermissionMixin
 from challenge.models import Challenge, ChallengeUser, VoteReaction
 from challenge.tables import ChallengeStatsTable
 from thegame.log_utils import save_attempt, get_attempts
+from thegame.utils import finished
 from user.mixins import IsStaffMixin
 from user.models import User
 
@@ -61,6 +62,8 @@ class ChallengeView(ChallengePermissionMixin, TemplateView):
         except ChallengeUser.DoesNotExist:
             succeed = False
         form = None if succeed else ChallengeTryForm()
+        if not succeed and finished():
+            form.fields['code'].disabled = True
         context.update({
             'challenge': challenge,
             'form': form
@@ -71,7 +74,10 @@ class ChallengeView(ChallengePermissionMixin, TemplateView):
         form = ChallengeTryForm(request.POST)
         c_id = kwargs.get('c_id', 1)
         context = self.get_context_data(**kwargs)
-        if form.is_valid():
+        if finished():
+            form.add_error(None, 'Time is up!')
+            form.fields['code'].disabled = True
+        elif form.is_valid():
             code = form.cleaned_data.get('code')
             try:
                 challenge_try = ChallengeUser.objects.get(user=self.request.user, challenge_id=c_id)

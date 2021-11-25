@@ -12,7 +12,7 @@
                 <div class="row">
                     <div class="col-lg-11" style="padding-left: 0px !important;">
                         Challenge: {{ challenge.name }}<br>
-                        <p style="font-size: small; margin: 0px !important;">{% if challenge.active %}Active now{% else %}Not active. Starts at <span name="dates">{{ challenge.activation_date|date:"m/d/Y H:i:s T" }}{% endif %}</span></p>
+                        <p style="font-size: small; margin: 0px !important;">{% if finished %}{{ app_name }} has finished{% elif challenge.active %}Active now{% else %}Not active. Starts at <span name="dates">{{ challenge.activation_date|date:"m/d/Y H:i:s T" }}{% endif %}</span></p>
                     </div>
                     <div class="col-lg-1 text-right" style="padding-right: 0px !important;">
                         {% if challenge.player_try.0.success %}<span class="badge badge-primary">Done</span>{% endif %}
