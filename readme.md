@@ -3,12 +3,16 @@
 ## Set up
 Needs python 3.X and virtualenv
 
-- `Git clone https://github.com/hackupc/thegame.git && cd thegame`
-- `virtualenv env --python=python3`
-- `source ./env/bin/activate`
-- `pip install -r requirements.txt`
-- (Optional) If using Postgres, set up the necessary environment variables for its usage before this step
-- `python manage.py migrate`
+```shell
+git clone https://github.com/hackupc/thegame.git && cd thegame
+virtualenv env --python=python3
+source ./env/bin/activate
+pip install -r requirements.txt
+# (Optional) If using Postgres, set up the necessary environment variables for its usage before this step
+python manage.py migrate
+python manage.py runserver
+```
+After running runserver you only need to enter your myhackupc credentials at [localhost:8000](localhost:8000).
 
 ## Features
 
