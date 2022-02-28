@@ -23,4 +23,10 @@ class Migration(migrations.Migration):
             name='topic',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='challenge.challengetopic'),
         ),
+        migrations.AlterField(
+            model_name='challenge',
+            name='topic',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL,
+                                    to='challenge.challengetopic'),
+        ),
     ]
