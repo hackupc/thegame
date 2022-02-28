@@ -6,6 +6,13 @@ from django.db import models
 from django.template import Template, Context
 
 
+class ChallengeTopic(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
 class Challenge(models.Model):
     TYPE_IMAGE = 'img'
     TYPE_FILE = 'file'
@@ -29,9 +36,10 @@ class Challenge(models.Model):
     solution = models.CharField(max_length=1000)
     file = models.FileField()
     activation_date = models.DateTimeField(default=datetime.now)
+    topic = models.ForeignKey(ChallengeTopic, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return '%s - %s' % (self.order, self.name)
+        return '%s - %s - %s' % (self.order, self.topic, self.name)
 
     def active(self):
         return self.activation_date <= pytz.utc.localize(datetime.now())

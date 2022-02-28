@@ -403,3 +403,9 @@ input:-webkit-autofill
     margin-left: 0px;
     margin-right: 0px;
 }
+
+.list-group-item.disabled-item {
+    background: #444444;
+    pointer-events: none;
+    color: #cccccc
+}
