@@ -5,7 +5,7 @@ from challenge.models import Challenge, ChallengeUser
 
 
 class ChallengeAdminForm(ModelForm):
-    solution_code = forms.CharField(initial='', required=False)
+    solution_code = forms.CharField(initial='', required=False, max_length=100)
 
     def save(self, commit=True):
         solution_code = self.cleaned_data.get('solution_code', '')
@@ -20,7 +20,7 @@ class ChallengeAdminForm(ModelForm):
 
 
 class ChallengeTryForm(Form):
-    code = forms.CharField(initial='', required=True)
+    code = forms.CharField(initial='', required=True, max_length=100)
 
 
 class VoteForm(ModelForm):

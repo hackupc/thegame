@@ -12,5 +12,6 @@ def finished():
 def get_substitutions_templates(request):
     return {
         'app_name': settings.APP_NAME,
+        'app_description': 'The game is easy! Go and try to solve all challenges!',
         'finished': finished(),
     }

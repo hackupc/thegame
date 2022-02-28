@@ -237,6 +237,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+MAX_UPLOAD_SIZE = "104857600"
+
 CAS_SERVER_URL = 'https://my.hackupc.com/cas/'
 CAS_VERSION = '3'
 CAS_APPLY_ATTRIBUTES_TO_USER = True
