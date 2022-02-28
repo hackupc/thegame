@@ -1,18 +1,20 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
+{% load dictionaries %}
 {% block head_title %}Challenges{% endblock %}
 {% block content %}
     <h1 style="text-align: center">Challenges</h1>
+    <p>Complete all challenges faster than anyone else to win the competition!</p>
 
     {% for phase, group in challenge_groups.items %}
-        <h2>Phase {{ phase }}</h2>
+        <h2>{% if phase is not None %}Topic: {{ phase }}{% else %}Challenges{% endif %}</h2>
         <div class="list-group">
         {% for challenge in group %}
-            <a {% if challenge.active and player_phase >= challenge.order or request.user.is_staff %}href="{% url 'challenge' challenge.pk %}"{% endif %} class="list-group-item" style="font-size: x-large">
+            <a {% if challenge.active and player_phase|is_allowed:challenge or request.user.is_staff %}href="{% url 'challenge' challenge.pk %}"{% endif %} class="list-group-item {% if challenge.active and player_phase|is_allowed:challenge or request.user.is_staff %}{% else %}disabled-item{% endif %}" style="font-size: x-large">
                 <div class="row">
                     <div class="col-lg-11" style="padding-left: 0px !important;">
-                        Challenge: {{ challenge.name }}<br>
-                        <p style="font-size: small; margin: 0px !important;">{% if finished %}{{ app_name }} has finished{% elif challenge.active %}Active now{% else %}Not active. Starts at <span name="dates">{{ challenge.activation_date|date:"m/d/Y H:i:s T" }}{% endif %}</span></p>
+                        {{ challenge.name }}<br>
+                        <p style="font-size: small; margin: 0px !important;">{% if finished %}{{ app_name }} has finished{% elif challenge.active and player_phase|is_allowed:challenge %}Active now {% elif challenge.active%}Challenge disabled. Finish previous challenges from this topic first.{% else %}Not active. Starts at <span name="dates">{{ challenge.activation_date|date:"m/d/Y H:i:s T" }}{% endif %}</span></p>
                     </div>
                     <div class="col-lg-1 text-right" style="padding-right: 0px !important;">
                         {% if challenge.player_try.0.success %}<span class="badge badge-primary">Done</span>{% endif %}

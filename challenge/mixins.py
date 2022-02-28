@@ -22,8 +22,8 @@ class ChallengePermissionMixin(AccessMixin):
             if challenge.order != 1:
                 c_order = challenge.order - 1
                 success = ChallengeUser.objects.filter(challenge__order=c_order, user=request.user,
-                                                       success=True).count()
-                challenges = Challenge.objects.filter(order=c_order).count()
+                                                       success=True, challenge__topic=challenge.topic).count()
+                challenges = Challenge.objects.filter(order=c_order, topic=challenge.topic).count()
                 if challenges > success:
                     return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)

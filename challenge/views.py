@@ -24,28 +24,30 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        challenges = Challenge.objects.all().prefetch_related(
-            Prefetch('challengeuser_set', queryset=ChallengeUser.objects.filter(user=self.request.user),
+        challenges = Challenge.objects.all().order_by('order').prefetch_related(
+            Prefetch('challengeuser_set', queryset=ChallengeUser.objects.filter(user=self.request.user, success=True),
                      to_attr='player_try'))
         result = {}
         player = {}
         for challenge in challenges:
+            aux2 = player.get(challenge.topic, {'order': 1, 'done': 0, 'challenges': 0})
             try:
-                aux2 = player.get(challenge.order, 0) + int(challenge.player_try[0].success)
-                player[challenge.order] = aux2
+                aux2['done'] += int(challenge.player_try[-1].success)
+                if aux2['order'] != challenge.order:
+                    aux2['order'] = challenge.order
+                    aux2['challenges'] = 0
             except IndexError:
                 pass
-            aux = result.get(challenge.order, [])
+            if aux2['order'] == challenge.order:
+                aux2['challenges'] += 1
+            player[challenge.topic] = aux2
+            aux = result.get(challenge.topic, [])
             aux.append(challenge)
-            result[challenge.order] = aux
-        try:
-            max_challenge = sorted(player.items())[-1]
-        except IndexError:
-            max_challenge = (1, 0)
-        player_phase = max_challenge[0] + int(max_challenge[1] == len(result.get(max_challenge[0], [])))
+            result[challenge.topic] = aux
+        player = {topic: item['order'] + int(item['done'] == item['challenges']) for topic, item in player.items()}
         context.update({
             'challenge_groups': result,
-            'player_phase': player_phase,
+            'player_phase': player,
         })
         return context
 

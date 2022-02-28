@@ -12,4 +12,4 @@ class RankingView(LoginRequiredMixin, SingleTableView):
 
     def get_queryset(self):
         return ChallengeUser.objects.filter(success=True).values('user__username')\
-            .annotate(count=Count('*'), time=Max('last_try')).order_by('-count', '-time')
+            .annotate(count=Count('*'), time=Max('last_try')).order_by('-count', 'time')

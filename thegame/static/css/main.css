@@ -258,7 +258,7 @@ img {
     padding: 0.5em 1em;
     text-align: center;
     transition: bottom 1s;
-    background-color:#3f5182;
+    background-color:#459574;
     z-index:1031; /*footer was set to 1030*/
     box-shadow: 0px 15px 15px 15px black;
     color:white;
@@ -402,4 +402,10 @@ input:-webkit-autofill
 .row {
     margin-left: 0px;
     margin-right: 0px;
+}
+
+.list-group-item.disabled-item {
+    background: #444444;
+    pointer-events: none;
+    color: #cccccc
 }
