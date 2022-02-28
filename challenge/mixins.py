@@ -14,7 +14,7 @@ class ChallengePermissionMixin(AccessMixin):
             return self.handle_no_permission()
         if request.user.username is None:
             return redirect(reverse('index'))
-        if request.user.is_staff:
+        if not request.user.is_staff:
             c_id = kwargs.get('c_id', 1)
             challenge = get_object_or_404(Challenge, pk=c_id)
             if pytz.utc.localize(datetime.now()) < challenge.activation_date:
