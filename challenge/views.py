@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import pytz
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Prefetch, Avg, Count
+from django.db.models import Prefetch, Avg
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
