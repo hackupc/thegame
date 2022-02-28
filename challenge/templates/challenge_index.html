@@ -10,7 +10,7 @@
         <h2>{% if phase is not None %}Topic: {{ phase }}{% else %}Challenges{% endif %}</h2>
         <div class="list-group">
         {% for challenge in group %}
-            <a {% if challenge.active and player_phase|is_allowed:challenge or request.user.is_staff %}href="{% url 'challenge' challenge.pk %}"{% endif %} class="list-group-item {% if challenge.active and player_phase|is_allowed:challenge %}{% else %}disabled-item{% endif %}" style="font-size: x-large">
+            <a {% if challenge.active and player_phase|is_allowed:challenge or request.user.is_staff %}href="{% url 'challenge' challenge.pk %}"{% endif %} class="list-group-item {% if challenge.active and player_phase|is_allowed:challenge  or request.user.is_staff %}{% else %}disabled-item{% endif %}" style="font-size: x-large">
                 <div class="row">
                     <div class="col-lg-11" style="padding-left: 0px !important;">
                         {{ challenge.name }}<br>
