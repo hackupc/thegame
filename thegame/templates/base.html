@@ -17,8 +17,8 @@
     <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
     <link rel="mask-icon" href="{% static 'img/favicon/safari-pinned-tab.svg' %}" color="#5f723f">
     <link rel="shortcut icon" href="{% static 'img/favicon/favicon.ico' %}">
-    <meta name="apple-mobile-web-app-title" content="HackUPC - The game">
-	<meta name="application-name" content="HackUPC - The game">
+    <meta name="apple-mobile-web-app-title" content="HackUPC - {{ app_name }}">
+	<meta name="application-name" content="HackUPC - {{ app_name }}">
     <meta name="msapplication-TileColor" content="#f8f8f8">
     <meta name="msapplication-config" content="{% static 'img/favicon/browserconfig.xml' %}">
 
@@ -36,7 +36,7 @@
     {% endblock %}
 
 
-    <title>{% block title %}{% block head_title %}{% endblock %} | {% endblock %}{{ app_name }}</title>
+    <title>{% block title %}{% block head_title %}{% endblock %} | {{ app_name }}{% endblock %}</title>
 </head>
 
 
@@ -56,17 +56,19 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    {% if request.user.is_staff %}
-                        <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.is_staff %}
+                            <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                        {% endif %}
+                        <li {% if '/ranking/' in request.path %}class="active"{% endif %}><a href="{% url 'ranking' %}">Ranking</a></li>
+                        <li {% if '/challenge/' in request.path %}class="active"{% endif %}><a href="{% url 'challenge-index' %}">Challenges</a></li>
                     {% endif %}
-                    <li {% if '/ranking/' in request.path %}class="active"{% endif %}><a href="{% url 'ranking' %}">Ranking</a></li>
-                    <li {% if '/challenge/' in request.path %}class="active"{% endif %}><a href="{% url 'challenge-index' %}">Challenges</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if request.user.is_authenticated %}
                         {% include 'include/user_tab.html' %}
                     {% else %}
-                        <li><a href="{% url 'cas_ng_login' %}"><span class="glyphicon glyphicon-log-in"></span> Log In</a></li>
+                        <li><a href="{% url 'oidc_login' %}"><span class="glyphicon glyphicon-log-in"></span> Log In</a></li>
                     {% endif %}
                 </ul>
             </div>

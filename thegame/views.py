@@ -5,6 +5,7 @@ from django.http import FileResponse, Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import View
+from django.views.generic import TemplateView
 
 from challenge.utils import is_template
 
@@ -21,8 +22,10 @@ class FilesView(LoginRequiredMixin, View):
             raise Http404
 
 
-class IndexView(LoginRequiredMixin, View):
-    def get(self, request):
+class IndexView(TemplateView):
+    template_name = 'index.html'
+
+    def dispatch(self, request, *args, **kwargs):
         if request.user.username is None:
             return redirect(reverse('set_username'))
-        return redirect(reverse('challenge-index'))
+        return super().dispatch(request, *args, **kwargs)

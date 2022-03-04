@@ -1,8 +1,8 @@
 Django==3.2.8
-django-cas-ng==4.2.1
 flake8==3.9.2
 django-bootstrap3==15.0.0
 django-tables2==2.4.1
+django-jwt-oidc
 sendgrid==3.6.3
 sendgrid-django==4.0.4
 psycopg2-binary~=2.8.3
