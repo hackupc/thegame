@@ -25,4 +25,5 @@ urlpatterns = [
     path('ranking/', include('ranking.urls')),
     path('files/<str:file>', FilesView.as_view(), name="protect_media"),
     path('', IndexView.as_view(), name="index"),
+    path('oidc/', include('django_jwt.urls'))
 ]

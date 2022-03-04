@@ -37,12 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_cas_ng',
     'bootstrap3',
     'django_tables2',
     'user',
     'challenge',
     'ranking',
+    'django_jwt',
 ]
 
 MIDDLEWARE = [
@@ -51,15 +51,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django_cas_ng.middleware.CASMiddleware',
+    'django_jwt.middleware.JWTAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'django_cas_ng.backends.CASBackend',
-)
 
 ROOT_URLCONF = 'thegame.urls'
 
@@ -239,6 +234,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MAX_UPLOAD_SIZE = "104857600"
 
-CAS_SERVER_URL = 'https://my.hackupc.com/cas/'
-CAS_VERSION = '3'
-CAS_APPLY_ATTRIBUTES_TO_USER = True
+JWT_CLIENT = {
+    'OPENID2_URL': os.environ.get('OIDC_URL'),
+    'CLIENT_ID': os.environ.get('OIDC_CLIENT_ID'),
+    'RENAME_ATTRIBUTES': {'sub': 'email', 'sub_type': 'type'},
+    'CREATE_USER': True,
+    'RESPONSE_TYPE': 'id_token',
+}
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = 'oidc_login'
