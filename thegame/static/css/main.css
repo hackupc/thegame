@@ -407,5 +407,5 @@ input:-webkit-autofill
 .list-group-item.disabled-item {
     background: #444444;
     pointer-events: none;
-    color: #cccccc
+    color: #cccccc;
 }
