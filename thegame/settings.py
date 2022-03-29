@@ -236,6 +236,7 @@ MAX_UPLOAD_SIZE = "104857600"
 
 JWT_CLIENT = {
     'OPENID2_URL': os.environ.get('OIDC_URL'),
+    'TYPE': 'remote',
     'CLIENT_ID': os.environ.get('OIDC_CLIENT_ID'),
     'RENAME_ATTRIBUTES': {'sub': 'email', 'sub_type': 'type'},
     'CREATE_USER': True,
