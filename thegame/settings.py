@@ -235,12 +235,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MAX_UPLOAD_SIZE = "104857600"
 
 JWT_CLIENT = {
-    'OPENID2_URL': os.environ.get('OIDC_URL'),
-    'TYPE': 'remote',
-    'CLIENT_ID': os.environ.get('OIDC_CLIENT_ID'),
+    'OPENID2_URL': os.environ.get('OPENID_URL', 'http://localhost:8000/openid/'),
+    'TYPE': 'fake' if DEBUG else 'remote',
+    'CLIENT_ID': os.environ.get('OPENID_CLIENT_ID', 'client_id'),
     'RENAME_ATTRIBUTES': {'sub': 'email', 'sub_type': 'type'},
     'CREATE_USER': True,
     'RESPONSE_TYPE': 'id_token',
 }
+if DEBUG:
+    JWT_CLIENT['DEFAULT_ATTRIBUTES'] = {'type': 'O'}
+    JWT_CLIENT['REQUEST_RESPONSE_TYPE'] = '?'
+
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = 'oidc_login'
