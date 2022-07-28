@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
 {% load render_table from django_tables2 %}
+{% block head %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+{% endblock %}
+
 {% block head_title %}Ranking{% endblock %}
 {% block content %}
     <h1 style="text-align: center">Ranking</h1>
+    <canvas id="chart" height="90" style="background-color: white"></canvas>
+
     <p>Reloading page in <span id="clock">60</span> seconds</p>
     {% render_table table %}
 
@@ -32,5 +39,106 @@
             setInterval(timer, 1000); // Reloads page in 1 minute
         });
 
+    </script>
+
+    <script>
+
+
+    function ConvertDate(UNIXtimestamp) {
+        timestamp = UNIXtimestamp * 1000;
+        date = new Date(timestamp);
+        year = date.getFullYear();
+        month = date.getMonth();
+        day = date.getDate();
+        hours = date.getHours();
+        min = date.getMinutes();
+        secs = date.getSeconds();
+
+        const zeroPad = (num, places) => String(num).padStart(places, '0')
+        // 2020-02-15 18:37:39
+        return year+"-"+zeroPad(month,2)+"-"+zeroPad(day,2)+" "+zeroPad(hours,2)+":"+zeroPad(min,2)+":"+zeroPad(secs,2);
+    }
+
+    function RecieveData(data){
+        /*[
+              {x: ConvertDate(1658151927), y: '-8.25'},
+          {x: ConvertDate(1658152927), y: '-4.25'},
+          {x: ConvertDate(1658153927), y: '4.25'},
+          {x: ConvertDate(1658154927), y: '20.25'},
+          ]
+
+         */
+        // data = 1658151927,-8.25|1658152927,-4.25
+        let dataPairs = data.trim().split("|");
+        return dataPairs.map(dataPair => {
+            const [date, val] = dataPair.split(',');
+            return {
+              x: ConvertDate(date),
+              y: val
+            }
+          });
+    }
+
+    function RecieveMultipleUsersData(multipleData){
+
+
+
+    }
+
+
+    let multipleData = {{  ChartData | safe }};
+
+
+    function FetchDatasets(){
+        /*[{
+          data: RecieveData(),
+          label: "user 1",
+          borderColor: "#3e95cd",
+          fill: false,
+            lineTension: 0,
+        }]*/
+        colors = ['#F90D1B','#F481BB','#FDE005','#EC00FC','#9D00FE','#00CF35','#90C903','#1CB9D9','#F8E8C3','#3A4474']
+        iterator = -1;
+        return Object.entries(multipleData).map(singleUserData => {
+            // get the [1] element because the [0] is the id eg "0"
+            const points = singleUserData[1].points;
+            const userName = singleUserData[1].name;
+            console.log(singleUserData[1]);
+
+            iterator++;
+            return {
+                data: RecieveData(points),
+                label: userName.toString(),
+                borderColor: colors[iterator],
+                fill: false,
+                lineTension: 0,
+            }
+
+          });
+    }
+
+
+
+
+    const ctx = document.querySelector("#chart").getContext('2d');
+    const config = {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: FetchDatasets()
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            type: 'time',
+            distribution: 'linear',
+          }],
+          title: {
+            display: false,
+          }
+        }
+      }
+    };
+    new Chart(ctx, config);
     </script>
 {% endblock %}
