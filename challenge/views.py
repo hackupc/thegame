@@ -99,7 +99,7 @@ class ChallengeView(ChallengePermissionMixin, TemplateView):
                 return render(request, template_name=self.template_name, context=context)
             challenge_try.total_attempts += 1
             challenge_try.last_try = now
-            if challenge_try.challenge.check_solution(code):
+            if challenge_try.challenge.check_solution(code, request.user.id):
                 challenge_try.success = True
                 challenge_try.save()
                 return redirect(reverse('challenge-vote', args=[challenge_try.challenge_id]))

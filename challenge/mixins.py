@@ -19,7 +19,7 @@ class ChallengePermissionMixin(AccessMixin):
             challenge = get_object_or_404(Challenge, pk=c_id)
             if pytz.utc.localize(datetime.now()) < challenge.activation_date:
                 return self.handle_no_permission()
-            if challenge.order != 1:
+            if challenge.order >= 1:
                 c_order = challenge.order - 1
                 success = ChallengeUser.objects.filter(challenge__order=c_order, user=request.user,
                                                        success=True, challenge__topic=challenge.topic).count()
