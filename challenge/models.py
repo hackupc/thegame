@@ -1,6 +1,9 @@
+import hashlib
+import re
 from datetime import datetime
 
 import pytz
+from django.conf import settings
 from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
 from django.template import Template, Context
@@ -28,12 +31,21 @@ class Challenge(models.Model):
         (TYPE_HTML, 'HTML Template'),
         (TYPE_NONE, 'None'),
     )
+    HASH_DERIVATION = 'Hash'
+    LIST_DERIVATION = 'List'
+    NO_DERIVATION = None
+    KEY_DERIVATIONS = (
+        (HASH_DERIVATION, 'Hash derivation: sha256(code + user.id)'),
+        (NO_DERIVATION, 'No derivation'),
+        (LIST_DERIVATION, 'Coma-separated list code derivation: code[id % len]')
+    )
 
     name = models.CharField(max_length=100)
-    description = models.TextField(max_length=5000, blank=True)
-    order = models.IntegerField()
+    description = models.TextField(blank=True)
+    order = models.IntegerField(help_text='Starts by 0', default=0)
     type = models.CharField(choices=TYPES, max_length=10)
-    solution = models.CharField(max_length=1000)
+    key_derivation = models.CharField(choices=KEY_DERIVATIONS, null=True, max_length=5)
+    solution = models.TextField()
     file = models.FileField()
     activation_date = models.DateTimeField(default=datetime.now)
     topic = models.ForeignKey(ChallengeTopic, on_delete=models.SET_NULL, null=True, blank=True)
@@ -51,12 +63,27 @@ class Challenge(models.Model):
         context = Context({'self': self})
         return template.render(context=context)
 
-    # solution will be hard encrypted for security reasons
     def set_solution(self, solution):
-        self.solution = make_password(solution)
+        if self.key_derivation == self.NO_DERIVATION:
+            self.solution = make_password(solution)
+        else:
+            self.solution = solution
 
-    def check_solution(self, solution):
-        return check_password(solution, self.solution)
+    def check_solution(self, solution, user_id):
+        try:
+            solution = re.match(getattr(settings, 'CODE_FORMAT'), solution, re.IGNORECASE).group(1)
+        except AttributeError:
+            return False
+        if self.key_derivation == self.NO_DERIVATION:
+            return check_password(solution, self.solution)
+        elif self.key_derivation == self.HASH_DERIVATION:
+            hasher = hashlib.sha256()
+            hasher.update(('%s%s' % (self.solution, user_id)).encode('utf-8'))
+            return solution == hasher.hexdigest()
+        elif self.key_derivation == self.LIST_DERIVATION:
+            solution_list = self.solution.replace(' ', '').split(',')
+            return solution == solution_list[user_id % len(solution_list)]
+        return False
 
     def check_troll(self, code):
         try:
