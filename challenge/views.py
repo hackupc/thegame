@@ -1,17 +1,20 @@
+import mimetypes
 from datetime import datetime, timedelta
 
 import pytz
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Prefetch, Avg
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
+from django.views import View
 from django.views.generic import TemplateView
 from django_tables2 import SingleTableView
 
 from challenge.forms import ChallengeTryForm, VoteForm
 from challenge.mixins import ChallengePermissionMixin
-from challenge.models import Challenge, ChallengeUser, VoteReaction
+from challenge.models import Challenge, ChallengeUser, VoteReaction, File
 from challenge.tables import ChallengeStatsTable
 from thegame.log_utils import save_attempt, get_attempts
 from thegame.utils import finished
@@ -189,3 +192,15 @@ class VoteChallengeReactionView(LoginRequiredMixin, TemplateView):
         except VoteReaction.DoesNotExist:
             pass
         return context
+
+
+class FileModelView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        filename = self.kwargs.get('filename')
+        file_model = File.objects.get(filename=filename)
+        file_bytes = file_model.get_file_bytes(self.request.user.id)
+        filename = file_model.filename
+        filename_extension = '.' + '.'.join(filename.split('.')[1:])
+        response = HttpResponse(file_bytes, content_type=mimetypes.types_map.get(filename_extension, ''))
+        response['Content-Disposition'] = 'attached; filename=' + file_model.filename
+        return response

@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 
-from challenge.forms import ChallengeAdminForm
-from challenge.models import Challenge, ChallengeUser, ChallengeTroll, VoteReaction, ChallengeTopic
+from challenge.forms import ChallengeAdminForm, FileAdminForm
+from challenge.models import Challenge, ChallengeUser, ChallengeTroll, VoteReaction, ChallengeTopic, File
 
 
 class ChallengeTrollAdmin(admin.StackedInline):
@@ -20,6 +20,11 @@ class ChallengeAdmin(ModelAdmin):
     inlines = [ChallengeTrollAdmin, VoteReactionAdmin]
 
 
+class FileAdmin(ModelAdmin):
+    form = FileAdminForm
+
+
 admin.site.register(ChallengeTopic)
 admin.site.register(Challenge, ChallengeAdmin)
 admin.site.register(ChallengeUser)
+admin.site.register(File, FileAdmin)

@@ -1,4 +1,5 @@
 import hashlib
+import logging
 import re
 from datetime import datetime
 
@@ -21,15 +22,13 @@ class Challenge(models.Model):
     TYPE_FILE = 'file'
     TYPE_AUDIO = 'mp3'
     TYPE_VIDEO = 'mp4'
-    TYPE_HTML = 'html'
     TYPE_NONE = 'none'
     TYPES = (
         (TYPE_IMAGE, 'Image'),
         (TYPE_FILE, 'File'),
         (TYPE_AUDIO, 'Audio'),
         (TYPE_VIDEO, 'Video'),
-        (TYPE_HTML, 'HTML Template'),
-        (TYPE_NONE, 'None'),
+        (TYPE_NONE, 'No file'),
     )
     HASH_DERIVATION = 'Hash'
     LIST_DERIVATION = 'List'
@@ -46,7 +45,7 @@ class Challenge(models.Model):
     type = models.CharField(choices=TYPES, max_length=10)
     key_derivation = models.CharField(choices=KEY_DERIVATIONS, null=True, max_length=5)
     solution = models.TextField()
-    file = models.FileField()
+    file = models.FileField(blank=True, null=True)
     activation_date = models.DateTimeField(default=datetime.now)
     topic = models.ForeignKey(ChallengeTopic, on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -57,9 +56,7 @@ class Challenge(models.Model):
         return self.activation_date <= pytz.utc.localize(datetime.now())
 
     def get_template_html(self):
-        with self.file.open('r') as file:
-            text = file.read()
-        template = Template(text)
+        template = Template(self.description)
         context = Context({'self': self})
         return template.render(context=context)
 
@@ -134,3 +131,33 @@ class VoteReaction(models.Model):
 
     class Meta:
         unique_together = ('challenge', 'type')
+
+
+class File(models.Model):
+    DOWNLOADABLE = 'Down'
+    SCRIPT_GENERATED = 'Script'
+    TYPES = (
+        (DOWNLOADABLE, 'Downloadable file'),
+        (SCRIPT_GENERATED, 'Script generated with user id as argument')
+    )
+
+    filename = models.CharField(max_length=100, unique=True)
+    file = models.BinaryField(editable=True)
+    type = models.CharField(max_length=10, choices=TYPES)
+
+    def __str__(self):
+        return self.filename
+
+    def get_file_bytes(self, user_id):
+        if self.type == self.DOWNLOADABLE:
+            return self.file
+        elif self.type == self.SCRIPT_GENERATED:
+            script = self.file.decode('utf-8')
+            script += '\n\nresult = main(%s)' % user_id
+            global_variables = globals()
+            try:
+                exec(script, global_variables)
+                return global_variables.get('result', None)
+            except Exception as e:
+                logging.getLogger(__name__).error(e)
+            return b''
