@@ -50,11 +50,13 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django_jwt.middleware.JWTAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+SILENCED_SYSTEM_CHECKS = ['admin.E408']
 
 ROOT_URLCONF = 'thegame.urls'
 
@@ -234,17 +236,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MAX_UPLOAD_SIZE = "104857600"
 
-JWT_CLIENT = {
-    'OPENID2_URL': os.environ.get('OPENID_URL', 'http://localhost:8000/openid/'),
-    'TYPE': 'fake' if DEBUG else 'remote',
-    'CLIENT_ID': os.environ.get('OPENID_CLIENT_ID', 'client_id'),
-    'RENAME_ATTRIBUTES': {'sub': 'email', 'sub_type': 'type'},
+JWT_OIDC = {
+    'TYPE': 'client',
+    'DISCOVERY_ENDPOINT': os.environ.get('OIDC_DISCOVERY_ENDPOINT',
+                                         'http://localhost:8000/openid/.well-known/openid-configuration'),
+    'CLIENT_ID': os.environ.get('OPENID_CLIENT_ID', '53354b74-012b-4ab4-ad49-86ed6980a297'),
+    'CLIENT_SECRET': os.environ.get('OPENID_CLIENT_SECRET', 'd075ea3f-cb94-4880-97ab-91f030dccc97'),
+    'RESPONSE_TYPE': 'code',
+    'ID_TOKEN_RENAME_ATTRIBUTES': {'admin': 'is_admin'},
     'CREATE_USER': True,
-    'RESPONSE_TYPE': 'id_token',
+    'SCOPE': 'openid email profile'
 }
-if DEBUG:
-    JWT_CLIENT['DEFAULT_ATTRIBUTES'] = {'type': 'O'}
-    JWT_CLIENT['REQUEST_RESPONSE_TYPE'] = '?'
 
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = 'oidc_login'

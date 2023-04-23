@@ -1,10 +1,9 @@
 from django import forms
-from django.forms import ModelForm, Form
 
-from challenge.models import Challenge, ChallengeUser
+from challenge.models import Challenge, ChallengeUser, File
 
 
-class ChallengeAdminForm(ModelForm):
+class ChallengeAdminForm(forms.ModelForm):
     solution_code = forms.CharField(initial='', required=False, widget=forms.Textarea(attrs={'rows': 1}))
 
     def save(self, commit=True):
@@ -18,11 +17,23 @@ class ChallengeAdminForm(ModelForm):
         exclude = ['solution']
 
 
-class ChallengeTryForm(Form):
+class ChallengeTryForm(forms.Form):
     code = forms.CharField(initial='', required=True, max_length=1000)
 
 
-class VoteForm(ModelForm):
+class VoteForm(forms.ModelForm):
     class Meta:
         fields = ('vote', 'comment')
         model = ChallengeUser
+
+
+class FileAdminForm(forms.ModelForm):
+    file = forms.FileField()
+
+    def clean_file(self):
+        file = self.cleaned_data.get('file')
+        return file.read()
+
+    class Meta:
+        model = File
+        exclude = ['id']
