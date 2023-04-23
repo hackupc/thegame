@@ -1,4 +1,4 @@
-Django==3.2.8
+Django==3.2.18
 flake8==3.9.2
 django-bootstrap3==15.0.0
 django-tables2==2.4.1
