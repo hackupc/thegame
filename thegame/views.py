@@ -7,14 +7,10 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
 
-from challenge.utils import is_template
-
 
 class FilesView(LoginRequiredMixin, View):
     def get(self, request, **kwargs):
         file_name = kwargs.get('file')
-        if is_template(file_name):
-            raise PermissionDenied()
         try:
             fs = FileSystemStorage()
             return FileResponse(fs.open(file_name))

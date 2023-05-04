@@ -197,7 +197,7 @@ class VoteChallengeReactionView(LoginRequiredMixin, TemplateView):
 class FileModelView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         filename = self.kwargs.get('filename')
-        file_model = File.objects.get(filename=filename)
+        file_model = get_object_or_404(File, filename=filename)
         file_bytes = file_model.get_file_bytes(self.request.user.id)
         filename = file_model.filename
         filename_extension = '.' + '.'.join(filename.split('.')[1:])
