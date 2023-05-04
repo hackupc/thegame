@@ -55,9 +55,9 @@ class Challenge(models.Model):
     def active(self):
         return self.activation_date <= pytz.utc.localize(datetime.now())
 
-    def get_template_html(self):
+    def get_template_html(self, request=None):
         template = Template(self.description)
-        context = Context({'self': self})
+        context = Context({'self': self, 'request': request})
         return template.render(context=context)
 
     def set_solution(self, solution):

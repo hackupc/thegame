@@ -15,7 +15,7 @@
 
     <h1 style="text-align: center">{{ challenge.name }} {% if not form %}(Completed){% elif finished %}({{ app_name }} has finished){% endif %}</h1>
     <div style="margin-bottom: 20px">
-        {{ challenge.get_template_html|safe }}
+        {{ challenge_description|safe }}
     </div>
 
     <div style="display:flex">
