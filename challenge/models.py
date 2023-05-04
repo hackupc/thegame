@@ -43,7 +43,7 @@ class Challenge(models.Model):
     description = models.TextField(blank=True)
     order = models.IntegerField(help_text='Starts by 0', default=0)
     type = models.CharField(choices=TYPES, max_length=10)
-    key_derivation = models.CharField(choices=KEY_DERIVATIONS, null=True, max_length=5)
+    key_derivation = models.CharField(choices=KEY_DERIVATIONS, null=True, max_length=5, blank=True)
     solution = models.TextField()
     file = models.FileField(blank=True, null=True)
     activation_date = models.DateTimeField(default=datetime.now)
