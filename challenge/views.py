@@ -69,9 +69,11 @@ class ChallengeView(ChallengePermissionMixin, TemplateView):
         form = None if succeed else ChallengeTryForm()
         if not succeed and finished():
             form.fields['code'].disabled = True
+        challenge_description = challenge.get_template_html(request=self.request)
         context.update({
             'challenge': challenge,
-            'form': form
+            'form': form,
+            'challenge_description': challenge_description
         })
         return context
 
