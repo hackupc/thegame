@@ -90,8 +90,8 @@ class Challenge(models.Model):
 
 
 class ChallengeUser(models.Model):
-    user = models.ForeignKey('user.User', on_delete=models.DO_NOTHING)
-    challenge = models.ForeignKey('challenge.Challenge', on_delete=models.DO_NOTHING)
+    user = models.ForeignKey('user.User', on_delete=models.CASCADE)
+    challenge = models.ForeignKey('challenge.Challenge', on_delete=models.CASCADE)
     first_try = models.DateTimeField(default=datetime.now)
     last_try = models.DateTimeField(null=True)
     attempt_date = models.DateTimeField(default=datetime.now)
@@ -100,6 +100,9 @@ class ChallengeUser(models.Model):
     total_attempts = models.IntegerField(default=0)
     vote = models.IntegerField(null=True)
     comment = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return str(self.challenge) + ' - ' + str(self.user)
 
 
 class ChallengeTroll(models.Model):
