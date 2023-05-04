@@ -8,4 +8,4 @@ ENDING_TIME = os.environ.get('ENDING_TIME', None)  # Day/Month/Year Hour:Minute 
 if ENDING_TIME is not None:
     ENDING_TIME = pytz.timezone('Europe/Madrid').localize(datetime.strptime(ENDING_TIME, "%d/%m/%Y %H:%M"))\
         .astimezone(pytz.utc)
-CODE_FORMAT = 'the_game{.*}'
+CODE_FORMAT = 'the_game{(.*)}'
