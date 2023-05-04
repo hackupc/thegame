@@ -152,7 +152,7 @@ class File(models.Model):
         if self.type == self.DOWNLOADABLE:
             return self.file
         elif self.type == self.SCRIPT_GENERATED:
-            script = self.file.decode('utf-8')
+            script = bytes(self.file).decode('utf-8')
             script += '\n\nresult = main(%s)' % user_id
             global_variables = globals()
             try:
