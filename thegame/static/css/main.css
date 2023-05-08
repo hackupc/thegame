@@ -5,8 +5,8 @@
 
 .background {
     background-image: url("../img/background.png");
-    height: 100%;
-    width: 100%;
+    min-height: 100%;
+    min-width: 100%;
     position: absolute;
     right: 0;
     top: 0;
