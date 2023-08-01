@@ -1,36 +1,97 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
 {% load render_table from django_tables2 %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"
+    integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous">
+    </script>
+{% endblock %}
 {% block head_title %}Ranking{% endblock %}
 {% block content %}
-    <h1 style="text-align: center">Ranking</h1>
-    <p>Reloading page in <span id="clock">60</span> seconds</p>
-    {% render_table table %}
+<h1 style="text-align: center">Top 10 Players</h1>
+<canvas id="ctfchart"></canvas>
+<h1 style="text-align: center">Ranking</h1>
+<p>Reloading page in <span id="clock">60</span> seconds</p>
+{% render_table table %}
 
 {% endblock %}
 {% block extra_scripts %}
-    <script>
-        let time = 60;
-        function to_date(text) {
-            let date = new Date(text);
-            return date.toLocaleString()
-        }
-        function timer() {
-            time -= 1;
-            if (time <= 0) {
-                location.reload();
-            } else {
-                $('#clock').each(function () {
-                    this.innerHTML = time.toString();
-                })
-            }
-        }
-        $( document ).ready(function() {
-            $('span[name="dates"]').each(function () {
-                this.innerHTML = to_date(this.innerHTML);
-            })
-            setInterval(timer, 1000); // Reloads page in 1 minute
-        });
 
-    </script>
+<script>
+
+    $(document).ready(function () {
+        loadChart(chartObj, "/ranking/chart");
+      error: () => console.log("Failed to fetch chart filter options!")
+    });
+
+    function loadChart(chart, endpoint) {
+        $.ajax({
+            url: endpoint,
+            type: "GET",
+            dataType: "json",
+            success: (jsonResponse) => {
+                console.log(jsonResponse)
+                // Extract data from the response
+                const title = jsonResponse.title;
+                //const labels = jsonResponse.data.labels;
+                const datasets = jsonResponse.data.datasets;
+
+                // Reset the current chart
+                chart.data.datasets = [];
+                chart.data.labels = [];
+
+                // Load new data into the chart
+                chart.options.title.text = title;
+                chart.options.title.display = true;
+                //chart.data.labels = labels;
+                for (var key in datasets) {
+                    datasetName = key;
+                    dataset = datasets[key];
+                    chart.data.datasets.push(dataset);
+                };
+                chart.update();
+            },
+            error: () => console.log("Failed to fetch chart data from " + endpoint + "!")
+        });
+    }
+
+    let chartCtx = document.getElementById("ctfchart").getContext("2d");
+    let chartObj = new Chart(chartCtx, {
+        type: "line",
+        options: {
+            responsive: true,
+            title: {
+                display: false,
+                text: ""
+            }
+            
+        }
+    });
+</script>
+
+<script>
+    let time = 60;
+    function to_date(text) {
+        let date = new Date(text);
+        return date.toLocaleString()
+    }
+    function timer() {
+        time -= 1;
+        if (time <= 0) {
+            location.reload();
+        } else {
+            $('#clock').each(function () {
+                this.innerHTML = time.toString();
+            })
+        }
+    }
+    $(document).ready(function () {
+        $('span[name="dates"]').each(function () {
+            this.innerHTML = to_date(this.innerHTML);
+        })
+        setInterval(timer, 1000); // Reloads page in 1 minute
+    });
+
+</script>
 {% endblock %}

@@ -2,6 +2,8 @@
 
 ## Set up
 Needs python 3.X and virtualenv
+Dependencies crash at Python 3.10
+Project stable at Python 3.8.X
 
 - `Git clone https://github.com/hackupc/thegame.git && cd thegame`
 - `virtualenv env --python=python3`
@@ -30,7 +32,15 @@ Needs python 3.X and virtualenv
 - **name:** Challenge title
 - **description:** Challenge description (HTML format optional).
 - **order:** Challenge phase. User cannot see challenges if not completed all the challenges from previous phase (initial = 1).
-- **file:** Challenge file image, video, audio and HTML (django tags can be used).
+- **file:** Challenge file image,  Preparing metadata (setup.py) ... error
+  error: subprocess-exited-with-error
+  
+  × python setup.py egg_info did not run successfully.
+  │ exit code: 1
+  ╰─> [23 lines of output]
+      running egg_info
+      creating /tmp/pip-pip-egg-info-7_rletbr/psycopg2_binary.egg-info
+      writing /tmp/pip-pip-egg-info-7_rletbr/psycopg2_binary.egg-info/PKG-INFO video, audio and HTML (django tags can be used).
 - **type:** Challenge type in order to render the file. If set to HTML, his url won't exist making it secret.
 - **solution:** Challenge solution. WriteOnly field. Encrypted.
 - **activation_date** Challenge activation date (UTC). Won't be accessible to hackers until this date.
