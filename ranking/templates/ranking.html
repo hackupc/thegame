@@ -2,12 +2,15 @@
 {% load bootstrap3 %}
 {% load render_table from django_tables2 %}
 {% block head %}
+<!-- Required Libraries for Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"
     integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous">
     </script>
+<!-- MomentJS and its adapter are required when using "time" charts -->
 <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+<!-- End of required libraries. -->
 {% endblock %}
 {% block head_title %}Ranking{% endblock %}
 {% block content %}
@@ -47,18 +50,14 @@
                 chart.options.title.text = title;
                 chart.options.title.display = true;
 
-                // Loop through every point and set a Date() obj to the x component
+                // Loop though every user (or dataset) and append it to chart
                 for (var key in datasets) {
                     datasetName = key;
                     dataset = datasets[key];
-
-                    iterator = 0
+                    
+                    // Loop through every point of dataset and set a Date() obj to the x component
                     dataset.data.forEach(data => {
-                        tmpstmp = data.x;
-                        points = data.y;
-                        console.log(data);
-                        dataset.data[iterator] = { x: new Date(tmpstmp), y: points };
-                        iterator++;
+                        data.x = new Date(data.x);
                     });
 
                     chart.data.datasets.push(dataset);
@@ -70,6 +69,7 @@
     }
 
     let chartCtx = document.getElementById("ctfchart").getContext("2d");
+    // Chart JS config, read docs first.
     let chartObj = new Chart(chartCtx, {
         type: "line",
         options: {
