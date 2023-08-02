@@ -18,7 +18,6 @@ class RankingView(LoginRequiredMixin, SingleTableView):
     
 def get_chart(request):
     # Get all Successful attempts
-    # TODO: limit to 10 players
     allEntries = list(ChallengeUser.objects.filter(success=True).values('user__username', 'last_try', 'total_attempts').order_by('last_try'))
 
     players = {}
@@ -30,9 +29,16 @@ def get_chart(request):
         playerDb.append({"x": successes['last_try'],"y": Pcounter[successes['user__username']]})
         players[successes['user__username']] = playerDb
     
+    # Get the ranking and slice it to the first 10
+    top10 = ChallengeUser.objects.filter(success=True).values('user__username')\
+            .annotate(count=Count('*'), time=Max('last_try')).order_by('-count', 'time')[:10]
+    # Generate a whitelist of tthe top 10 usernames
+    top10names = [i['user__username'] for i in top10]
+        
     # Format the output required from ChartJS in order to work 
     final = []
     for username in players:
+        if(username not in top10names): continue
         final.append({
             # Set dataset name to the username owner
             "label" : username,
