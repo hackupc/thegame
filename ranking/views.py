@@ -5,6 +5,7 @@ from django.http import JsonResponse
 
 from challenge.models import ChallengeUser
 from ranking.tables import RankingTable
+from datetime import datetime
 
 
 class RankingView(LoginRequiredMixin, SingleTableView):
@@ -16,7 +17,7 @@ class RankingView(LoginRequiredMixin, SingleTableView):
             .annotate(count=Count('*'), time=Max('last_try')).order_by('-count', 'time')
     
 def get_chart(request):
-    allEntries = list(ChallengeUser.objects.filter(success=True).values('user__username', 'last_try', 'total_attempts').order_by('-last_try'))
+    allEntries = list(ChallengeUser.objects.filter(success=True).values('user__username', 'last_try', 'total_attempts').order_by('last_try'))
 
     players = {}
     Pcounter = {}
