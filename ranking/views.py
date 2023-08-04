@@ -23,14 +23,14 @@ class ChartView(LoginRequiredMixin):
         allEntries = list(ChallengeUser.objects.filter(success=True)
                           .values('user__username', 'last_try', 'total_attempts').order_by('last_try'))
 
-        players = {}
-        pCounter = {}
+        allPlayers = {}
+        pointsCounter = {}
         # Classify them by player, in chronological order.
         for successes in allEntries:
-            pCounter[successes['user__username']] = pCounter.get(successes['user__username'], 0) + 1
-            playerDb = players.get(successes['user__username'], [])
-            playerDb.append({"x": successes['last_try'], "y": pCounter[successes['user__username']]})
-            players[successes['user__username']] = playerDb
+            pointsCounter[successes['user__username']] = pointsCounter.get(successes['user__username'], 0) + 1
+            playerDb = allPlayers.get(successes['user__username'], [])
+            playerDb.append({"x": successes['last_try'], "y": pointsCounter[successes['user__username']]})
+            allPlayers[successes['user__username']] = playerDb
 
         # Get the ranking and slice it to the first 10
         top10 = ChallengeUser.objects.filter(success=True).values('user__username')\
@@ -41,12 +41,12 @@ class ChartView(LoginRequiredMixin):
 
         # Format the output required from ChartJS in order to work
         final = []
-        for username in players:
+        for username in allPlayers:
             if (username in top10names):
                 final.append({
                     # Set dataset name to the username owner
                     "label": username,
-                    "data": players[username]
+                    "data": allPlayers[username]
                 })
         return JsonResponse(
             {
