@@ -4,9 +4,6 @@
 {% block head %}
 <!-- Required Libraries for Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.2/dist/chart.umd.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"
-    integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous">
-    </script>
 <!-- MomentJS and its adapter are required when using "time" charts -->
 <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
@@ -51,7 +48,7 @@
                 chart.options.title.display = true;
 
                 // Loop though every user (or dataset) and append it to chart
-                for (var key in datasets) {
+                for (let key in datasets) {
                     datasetName = key;
                     dataset = datasets[key];
                     
