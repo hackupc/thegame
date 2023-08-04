@@ -15,12 +15,13 @@ class RankingView(LoginRequiredMixin, SingleTableView):
         return ChallengeUser.objects.filter(success=True).values('user__username')\
             .annotate(count=Count('*'), time=Max('last_try')).order_by('-count', 'time')
 
+
 class ChartView(LoginRequiredMixin):
-    
+
     def get_chart(request):
         # Get all Successful attempts
-        allEntries = list(ChallengeUser.objects.filter(success=True).values('user__username', 'last_try', 'total_attempts')
-                        .order_by('last_try'))
+        allEntries = list(ChallengeUser.objects.filter(success=True)
+                          .values('user__username', 'last_try', 'total_attempts').order_by('last_try'))
 
         players = {}
         Pcounter = {}
