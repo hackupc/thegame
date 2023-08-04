@@ -5,6 +5,7 @@ from django.http import JsonResponse
 
 from challenge.models import ChallengeUser
 from ranking.tables import RankingTable
+from django.views import View
 
 
 class RankingView(LoginRequiredMixin, SingleTableView):
@@ -16,9 +17,9 @@ class RankingView(LoginRequiredMixin, SingleTableView):
             .annotate(count=Count('*'), time=Max('last_try')).order_by('-count', 'time')
 
 
-class ChartView(LoginRequiredMixin):
+class ChartView(LoginRequiredMixin, View):
 
-    def get_chart(request):
+    def get(self, request, *args, **kwaergs):
         # Get all Successful attempts
         allEntries = list(ChallengeUser.objects.filter(success=True)
                           .values('user__username', 'last_try', 'total_attempts').order_by('last_try'))
