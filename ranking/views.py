@@ -35,7 +35,7 @@ class ChartView(LoginRequiredMixin):
         # Get the ranking and slice it to the first 10
         top10 = ChallengeUser.objects.filter(success=True).values('user__username')\
             .annotate(count=Count('*'), time=Max('last_try')).order_by('-count', 'time')[:10]
-        
+
         # Generate a whitelist of tthe top 10 usernames
         top10names = [i['user__username'] for i in top10]
 
