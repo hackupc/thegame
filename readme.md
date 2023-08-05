@@ -2,6 +2,8 @@
 
 ## Set up
 Needs python 3.X and virtualenv
+Dependencies crash at Python 3.10
+Project stable at Python 3.8.X
 
 - `Git clone https://github.com/hackupc/thegame.git && cd thegame`
 - `virtualenv env --python=python3`
@@ -30,7 +32,7 @@ Needs python 3.X and virtualenv
 - **name:** Challenge title
 - **description:** Challenge description (HTML format optional).
 - **order:** Challenge phase. User cannot see challenges if not completed all the challenges from previous phase (initial = 1).
-- **file:** Challenge file image, video, audio and HTML (django tags can be used).
+- **file:** Challenge file image, video, audio and HTML (django tags can be used).  
 - **type:** Challenge type in order to render the file. If set to HTML, his url won't exist making it secret.
 - **solution:** Challenge solution. WriteOnly field. Encrypted.
 - **activation_date** Challenge activation date (UTC). Won't be accessible to hackers until this date.
@@ -46,3 +48,7 @@ Needs python 3.X and virtualenv
 - **challenge:** Challenge to add this reaction.
 - **type:** Reaction can be happy (vote>5) or sad (vote<=5).
 - **image:** Image to display when the hacker votes.
+
+## FAQ
+### The ranking chart does not update. What's happening?
+It's because it has a 60 second timeout of cache loading. If necessary, add the `force_update=true` query parameter to bypass this timeout.
