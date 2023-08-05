@@ -48,3 +48,7 @@ Project stable at Python 3.8.X
 - **challenge:** Challenge to add this reaction.
 - **type:** Reaction can be happy (vote>5) or sad (vote<=5).
 - **image:** Image to display when the hacker votes.
+
+## FAQ
+### The ranking chart does not update. What's happening?
+It's because it has a 60 second timeout of cache loading. If necessary, add the `force_update=true` query parameter to bypass this timeout.
