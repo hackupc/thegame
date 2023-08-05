@@ -5,5 +5,5 @@ from django.views.decorators.cache import cache_page
 
 urlpatterns = [
     path('', RankingView.as_view(), name='ranking'),
-    path('chart',  cache_page(60*60)(ChartView.as_view()), name="chart")
+    path('chart',  cache_page(60)(ChartView.as_view()), name="chart")
 ]
