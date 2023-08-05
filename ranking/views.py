@@ -7,7 +7,7 @@ from challenge.models import ChallengeUser
 from ranking.tables import RankingTable
 from django.views import View
 
-from thegame.views import CacheMixin
+from thegame.mixins import CacheMixin
 
 
 class RankingView(LoginRequiredMixin, SingleTableView):
