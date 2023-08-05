@@ -31,6 +31,10 @@ class CacheMixin(object):
     cache_timeout = 60
 
     def get_cache_timeout(self):
+        force_update = self.request.GET.get('force_update', None)
+        if force_update == 'true':
+            # Disable cache if the query param: force_update=true is recieved.
+            return 0
         return self.cache_timeout
 
     def dispatch(self, *args, **kwargs):
